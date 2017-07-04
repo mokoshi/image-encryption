@@ -1,0 +1,16 @@
+{
+  "name": "xor-encryption-js",
+  "version": "1.0.0",
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mokoshi/xor-encryption-js.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mokoshi/xor-encryption-js/issues"
+  },
+  "homepage": "https://github.com/mokoshi/xor-encryption-js#readme"
+}

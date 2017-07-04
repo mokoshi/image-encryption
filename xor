@@ -1,0 +1,60 @@
+#!/usr/bin/env node
+
+const fs = require('fs')
+const argv = require('argv')
+
+const random = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+const genkey = () => {
+  const keylen = random(5, 10)
+  const key = []
+  for (let i = 0; i < keylen; i++) {
+    key.push(random(0, 255))
+  }
+  return key
+}
+
+const xor = (arr, key) => {
+  const len = key.length
+  for (let i = 0; i < arr.length; i++) {
+    arr[i] ^= key[i % len]
+  }
+  return arr
+}
+
+argv.option([
+  {
+    name: 'decrypt',
+    short: 'D',
+    type: 'boolean',
+  },
+  {
+    name: 'out',
+    short: 'o',
+    type: 'string',
+  },
+])
+
+const args = argv.run()
+
+const isDecrypt = args.options['decrypt']
+const inpath = args.targets[0]
+const outpath = args.options['out'] || `${inpath}.${isDecrypt ? 'dec' : 'enc'}`
+
+const file = fs.readFileSync(inpath)
+
+const buf = new Uint8Array(file)
+
+if (isDecrypt) {
+  const keylen = buf[0]
+  const key = buf.subarray(1, 1 + keylen)
+  const decrypted = xor(buf.subarray(1 + keylen), key)
+  fs.writeFileSync(outpath, new Buffer(decrypted))
+} else {
+  const key = genkey()
+  const encrypted = new Uint8Array([key.length, ...key, ...xor(buf, key)])
+  fs.writeFileSync(outpath, new Buffer(encrypted))
+}
+
